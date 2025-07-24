@@ -1,97 +1,66 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aspheric Lens Calculator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-    }
-    input {
-      margin-bottom: 10px;
-      display: block;
-    }
-    label {
-      font-weight: bold;
-    }
-    #downloadLink {
-      display: none;
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Aspheric Lens Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2em;
+            background: #f8f8f8;
+            color: #333;
+        }
+        form {
+            max-width: 600px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+        #success {
+            display: none;
+            margin-top: 20px;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-  <h1>Aspheric Lens Calculator</h1>
-
-  <form id="lensForm">
-    <label for="radius">Radius of Curvature (R in mm):</label>
-    <input type="number" id="radius" name="radius" required step="any" />
-
-    <label for="conic">Conic Constant (k):</label>
-    <input type="number" id="conic" name="conic" required step="any" />
-
-    <label for="a4">A₄ Coefficient:</label>
-    <input type="number" id="a4" name="a4" step="any" />
-
-    <label for="a6">A₆ Coefficient:</label>
-    <input type="number" id="a6" name="a6" step="any" />
-
-    <label for="a8">A₈ Coefficient:</label>
-    <input type="number" id="a8" name="a8" step="any" />
-
-    <label for="a10">A₁₀ Coefficient:</label>
-    <input type="number" id="a10" name="a10" step="any" />
-
-    <label for="a12">A₁₂ Coefficient:</label>
-    <input type="number" id="a12" name="a12" step="any" />
-
-    <label for="aperture">Aperture Diameter (mm):</label>
-    <input type="number" id="aperture" name="aperture" required step="any" />
-
-    <label for="thickness">Lens Center Thickness (mm):</label>
-    <input type="number" id="thickness" name="thickness" required step="any" />
-
-    <button type="submit">Generate CSV</button>
-  </form>
-
-  <a id="downloadLink">Download Sag Profile CSV</a>
-
-  <script>
-    document.getElementById("lensForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const R = parseFloat(document.getElementById("radius").value);
-      const k = parseFloat(document.getElementById("conic").value);
-      const A4 = parseFloat(document.getElementById("a4").value || 0);
-      const A6 = parseFloat(document.getElementById("a6").value || 0);
-      const A8 = parseFloat(document.getElementById("a8").value || 0);
-      const A10 = parseFloat(document.getElementById("a10").value || 0);
-      const A12 = parseFloat(document.getElementById("a12").value || 0);
-      const aperture = parseFloat(document.getElementById("aperture").value);
-      const thickness = parseFloat(document.getElementById("thickness").value);
-
-      const step = 0.1;
-      const rMax = aperture / 2;
-      const rows = [["r (mm)", "z (mm)"]];
-
-      for (let r = 0; r <= rMax; r += step) {
-        const base = R * (1 + Math.sqrt(1 - (1 + k) * (r * r) / (R * R)));
-        const z = (r * r) / base + A4 * r ** 4 + A6 * r ** 6 + A8 * r ** 8 + A10 * r ** 10 + A12 * r ** 12;
-        rows.push([r.toFixed(3), z.toFixed(6)]);
-      }
-
-      const csvContent = rows.map((row) => row.join(",")).join("\n");
-      const blob = new Blob([csvContent], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-
-      const dl = document.getElementById("downloadLink");
-      dl.href = url;
-      dl.download = `aspheric_profile_${Date.now()}.csv`;
-      dl.textContent = 'Download Sag Profile CSV';
-      dl.style.display = 'block';
-    });
-  </script>
+    <h2>Aspheric Lens Calculator</h2>
+    <form id="lensForm">
+        <label>Email Address
+            <input type="email" id="email" required>
+        </label>
+        <label>Radius of Curvature (R)
+            <input type="number" id="R" step="any" required>
+        </label>
+        <label>Conic Constant (k)
+            <input type="number" id="k" step="any" required>
+        </label>
+        <label>Aperture Radius (mm)
+            <input type="number" id="aperture" step="any" required>
+        </label>
+        <label>Thickness at Vertex (mm)
+            <input type="number" id="thickness" step="any" required>
+        </label>
+        <label>A2 <input type="number" id="A2" step="any"></label>
+        <label>A4 <input type="number" id="A4" step="any"></label>
+        <label>A6 <input type="number" id="A6" step="any"></label>
+        <label>A8 <input type="number" id="A8" step="any"></label>
+        <label>A12 <input type="number" id="A12" step="any"></label>
+        <button type="submit">Generate CSV</button>
+    </form>
+    <p id="success">Thank you! We'll email you your lens profile shortly.</p>
+    <script src="script.js"></script>
 </body>
 </html>
